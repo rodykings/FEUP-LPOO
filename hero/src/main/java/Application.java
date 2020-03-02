@@ -12,10 +12,8 @@ public class Application {
 
     public static void main(String[] args) throws IOException {
 
-        Game game = new Game();
+        Hero hero = new Hero(10, 10);
+        Game game = new Game(hero);
         game.run();
-
-
-
     }
 }

@@ -1,4 +1,6 @@
 import com.googlecode.lanterna.TextCharacter;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -8,10 +10,14 @@ import java.io.IOException;
 
 public class Game {
 
+    Hero hero;
+
     Terminal terminal = new DefaultTerminalFactory().createTerminal();
     Screen screen = new TerminalScreen(terminal);
 
-    public Game() throws IOException {
+    public Game(Hero hero) throws IOException {
+        this.hero = hero;
+
         try {
 
             screen.setCursorPosition(null);   // we don't need a cursor
@@ -26,11 +32,33 @@ public class Game {
     }
     private void draw() throws IOException {
         screen.clear();
-        screen.setCharacter(10, 10, new TextCharacter('X'));
+        hero.draw(screen);
         screen.refresh();
     }
     public void run() throws IOException {
-        draw();
+        while(true){
+            draw();
+            KeyStroke key = screen.readInput();
+            processKey(key);
+            if(key.getKeyType() == KeyType.EOF)
+                break;
+        }
+
+    }
+
+    private void processKey(KeyStroke key) throws IOException {
+            if(key.getKeyType() == KeyType.ArrowUp)
+                hero.moveUp();
+            if(key.getKeyType() == KeyType.ArrowDown)
+                hero.moveDown();
+            if(key.getKeyType() == KeyType.ArrowLeft)
+                hero.moveLeft();
+            if(key.getKeyType() == KeyType.ArrowRight)
+                hero.moveRight();
+            if (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q')
+                screen.close();
+
+        System.out.println(key);
     }
 
 }
