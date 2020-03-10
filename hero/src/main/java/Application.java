@@ -12,8 +12,8 @@ public class Application {
 
     public static void main(String[] args) throws IOException {
 
-        Hero hero = new Hero(10, 10);
-        Game game = new Game(hero);
+        Arena arena = new Arena(20, 20);
+        Game game = new Game(arena);
         game.run();
     }
 }

@@ -1,49 +1,43 @@
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
+import com.googlecode.lanterna.SGR;
 
-public class Hero {
+public class Hero extends Element{
 
-    private int x;
-    private int y;
 
-    public Hero(int x, int y){
-        this.x = x;
-        this.y = y;
+    public Hero(Position position){
+        super(position);
     }
 
-    public int getX() {
-        return x;
+    public Position moveUp(){
+        return new Position(super.getPosition().getX(), super.getPosition().getY()-1);
     }
 
-    public int getY() {
-        return y;
+    public Position moveDown(){
+        return new Position(super.getPosition().getX(), super.getPosition().getY()+1);
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public Position moveLeft(){
+        return new Position(super.getPosition().getX()-1, super.getPosition().getY());
     }
 
-    public void setY(int y) {
-        this.y = y;
+    public Position moveRight(){
+        return new Position(super.getPosition().getX()+1, super.getPosition().getY());
     }
 
-    public void moveUp(){
-        this.y--;
+    public void setPosition(Position position){
+        super.setPosition(position);
     }
 
-    public void moveDown(){
-        this.y++;
+    @Override
+    public Position getPosition() {
+        return super.getPosition();
     }
 
-    public void moveLeft(){
-        this.x--;
-    }
-
-    public void moveRight(){
-        this.x++;
-    }
-
-    public void draw(Screen screen){
-        screen.setCharacter(x, y, new TextCharacter('X'));
+    public void draw(TextGraphics graphics){
+        graphics.setForegroundColor(TextColor.Factory.fromString("#FFFFFF"));
+        graphics.enableModifiers(SGR.BOLD);
+        graphics.putString(new TerminalPosition(super.getPosition().getX(), super.getPosition().getY()), "X");
     }
 }
