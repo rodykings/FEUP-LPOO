@@ -30,206 +30,233 @@ public class TestCases {
     }
 
 
-  @Test
-  public void testEvent() {
-    Event e = new Event("ENEI");
-    assertEquals("ENEI", e.getTitle());
-    assertEquals("", e.getDate());
-    assertEquals("", e.getDescription());
-    e = new Event("ENEI", "23 to 26 of March");
-    assertEquals("ENEI", e.getTitle());
-    assertEquals("23 to 26 of March", e.getDate());
-    assertEquals("", e.getDescription());
-    e = new Event("ENEI", "23 to 26 of March", "Encontro Nacional de Estudantes de Informatica");
-    assertEquals("ENEI", e.getTitle());
-    assertEquals("23 to 26 of March", e.getDate());
-    assertEquals("Encontro Nacional de Estudantes de Informatica", e.getDescription());
-    fieldsArentPublic(Event.class);
-  }
+    @Test
+    public void testActs() {
+        Act radiohead = new Band("Radiohead", "UK");
+        Act bob = new Artist("Bob Dylan", "USA");
 
+        assertEquals("Radiohead", radiohead.getName());
+        assertEquals("UK", radiohead.getCountry());
 
+        assertEquals("Bob Dylan", bob.getName());
+        assertEquals("USA", bob.getCountry());
 
-  @Test
-  public void testEventCopyConstructor() {
-    Event e = new Event("A", "B", "C");
-    Event e1 = new Event(e);
-    assertEquals("A", e1.getTitle());
-    assertEquals("B", e1.getDate());
-    assertEquals("C", e1.getDescription());
-    assertNotSame(e, e1);
-  }
+        // Make sure your fields aren't public
+        fieldsArentPublic(Artist.class);
+        fieldsArentPublic(Band.class);
 
-
-
-
-  @Test
-  public void testEventAccessors() {
-    Event e = new Event("TalkABit", "January 20th, 2017", "non-profit tech conference");
-    e.setTitle("TalkALot");
-    assertEquals("TalkALot", e.getTitle());
-    e.setDate("January 20th, 2018");
-    assertEquals("January 20th, 2018", e.getDate());
-    e.setDescription("We take your money tech conference");
-    assertEquals("We take your money tech conference", e.getDescription());
-  }
-
-
-
-
-  @Test
-  public void testEventPrintOut() {
-    Event e = new Event("WebSummit", "Next year again", "world-wide tech event");
-    assertEquals("WebSummit is a world-wide tech event and will be held at Next year again.", "" + e);
-    e = new Event("TalkABit", "January 20th, 2017", "non-profit tech conference");
-    assertEquals("TalkABit is a non-profit tech conference and will be held at January 20th, 2017.", "" + e);
-  }
-
-
-
-
-
-  @Test
-  public void testSameEvent() {
-    Event e = new Event("WebSummit", "Next year again", "world-wide tech event");
-    Event e1 = new Event(e);
-    Event e2 = new Event(e);
-    Event e3 = new Event(e);
-    assertTrue(e.equals(e1));
-    assertTrue(e.equals((Object) e1));
-    assertTrue(e.equals(e2));
-    assertTrue(e.equals((Object) e2));
-    assertTrue(e.equals(e3));
-    assertTrue(e.equals((Object) e3));
-    assertNotSame(e, e1);
-    assertNotSame(e, e2);
-    assertNotSame(e, e3);
-    e1.setTitle("TalkABit");
-    assertFalse(e.equals(e1));
-    assertFalse(e.equals((Object) e1));
-    e2.setDate("January 20th, 2017");
-    assertFalse(e.equals(e2));
-    assertFalse(e.equals((Object) e2));
-    e3.setDescription("non-profit tech conference");
-    assertFalse(e.equals(e3));
-    assertFalse(e.equals((Object) e3));
-  }
-
-
-
-  @Test
-  public void testParticipants() {
-    Person p = new Attendee("John");
-    {
-      assertEquals("John", p.getName());
-      assertEquals(0, p.getAge());
-
-      Person p1 = new Attendee("Mary", 27);
-      assertEquals("Mary", p1.getName());
-      assertEquals(27, p1.getAge());
-
-      Person p2 = new Speaker("Jane", 38);
-      assertEquals("Jane", p2.getName());
-      assertEquals(38, p2.getAge());
-
-      Attendee a = (Attendee) p1;
-      assertFalse(a.hasPaid());
-
-      Speaker s = (Speaker) p2;
-      assertEquals(0, s.getFee());
-
-      assertEquals("Speaker " + s.getName() + " has a fee value of " + s.getFee() + ".", "" + p2);
-      assertEquals("Attendee " + a.getName() + (a.hasPaid() ? " has" : " hasn't") + " paid its registration.", "" + p1);
-
-      fieldsArentPublic(Person.class, Attendee.class, Speaker.class);
-      isAbstract(Person.class);
-    }
-  }
-
-
-
-  @Test
-  public void testAudience() {
-    Event e = new Event("E1", "Whenever", "Whatever");
-    e.addPerson(new Attendee("John", 21));
-    e.addPerson(new Attendee("Mary", 31));
-    e.addPerson(new Speaker("Jane", 51));
-    assertEquals(3, e.getAudienceCount());
-    e.addPerson(new Attendee("Carl", 41));
-    assertEquals(4, e.getAudienceCount());
-    e.addPerson(new Attendee("John", 33));
-    assertEquals(4, e.getAudienceCount());
-    e.addPerson(new Attendee("Mary", 15));
-    assertEquals(4, e.getAudienceCount());
-    e.addPerson(new Attendee("Bill", 15));
-    assertEquals(5, e.getAudienceCount());
-    e.addPerson(new Speaker("Bill", 60));
-    assertEquals(5, e.getAudienceCount());
-  }
-
-
-
-
-  @Test
-  public void testNoDuplicatePerson() {
-    TreeSet<Person> people = new TreeSet<Person>();
-    Person p = new Speaker("John");
-    people.add(p);
-    assertEquals(1, people.size());
-    p = new Attendee("John");
-    people.add(p);
-    assertEquals(1, people.size());
-  }
-
-
-
-
-  @Test
-  public void testParty() {
-    Party p = new Party("FEUP Caffe", "Tonight!", "Party on!");
-    p.addPerson(new Attendee("John"));
-    p.addPerson(new Artist("Beck"));
-    assertEquals(2, p.getAudienceCount());
-    assertEquals(2, ((Event) p).getAudienceCount());
-    Event e = new Event("TalkABit");
-    e.addPerson(new Attendee("Mary"));
-    e.addPerson(new Attendee("Jane"));
-    p.addEvent(e);
-    assertEquals(4, p.getAudienceCount());
-    assertEquals(4, ((Event) p).getAudienceCount());
-    assertEquals(2, e.getAudienceCount());
-    e = new Event("WebSummit");
-    e.addPerson(new Attendee("Carl"));
-    e.addPerson(new Attendee("Louis"));
-    e.addPerson(new Attendee("Jessica"));
-    p.addEvent(e);
-    assertEquals(7, p.getAudienceCount());
-    assertEquals(7, ((Event) p).getAudienceCount());
-    assertEquals(3, e.getAudienceCount());
-  }
-
-
-
-
-  @Test
-  public void testUsernames() {
-    ArrayList<User> users = new ArrayList<User>();
-
-    User u = new Attendee("John", 43);
-    assertEquals("John43", u.getUsername());
-
-    users.add(u);
-    users.add(new Speaker("Bill Gates", 12));
-    users.add(new Artist("Beck", 20));
-
-    Iterator<User> i = users.iterator();
-    String s = "";
-    while (i.hasNext()) {
-        User user = i.next();
-        s += "," + user.getUsername();
+        // Make sure your Act class is abstract
+        isAbstract(Act.class);
     }
 
-    assertEquals(",John43,Bill Gates12,Beck20", s);
-  }
+
+
+    @Test
+    public void testConcert() {
+        Band radiohead = new Band("Radiohead", "UK");
+        Artist bob = new Artist("Bob Dylan", "USA");
+
+        Concert concert = new Concert("London", "UK", "2019/10/10");
+        concert.addAct(radiohead);
+        concert.addAct(bob);
+
+        List<Act> acts = concert.getActs();
+        assertEquals(2, acts.size());
+        assertEquals("London", concert.getCity());
+        assertEquals("UK", concert.getCountry());
+        assertEquals("2019/10/10", concert.getDate());
+
+        fieldsArentPublic(Concert.class);
+    }
+
+
+
+    @Test
+    public void testEquals() {
+        Concert concert1 = new Concert("Paris", "France", "2019/10/10");
+        Concert concert2 = new Concert("Paris", "USA", "2019/10/10");
+
+        assertNotEquals(concert1, concert2);
+
+        Concert concert3 = new Concert("New York", "USA", "2019/10/10");
+        assertNotEquals(concert2, concert3);
+
+        Concert concert4 = new Concert("New York", "USA", "2019/05/20");
+        assertNotEquals(concert3, concert4);
+
+        Concert concert5 = new Concert("New York", "USA", "2019/05/20");
+        assertEquals(concert4, concert5);
+    }
+
+
+
+    @Test 
+    public void testSet() {
+        Concert concert1 = new Concert("Paris", "France", "2019/10/10");
+        Concert concert2 = new Concert("Paris", "USA", "2019/10/10");
+        Concert concert3 = new Concert("New York", "USA", "2019/10/10");
+        Concert concert4 = new Concert("New York", "USA", "2019/05/20");
+        Concert concert5 = new Concert("New York", "USA", "2019/05/20");
+
+        Set<Concert> tour = new HashSet<>();
+        tour.add(concert1);
+        tour.add(concert2);
+        tour.add(concert3);
+        tour.add(concert4);
+        tour.add(concert5);
+
+        assertEquals(4, tour.size());
+    }
+
+
+
+    @Test
+    public void testTicket() throws InvalidTicket {
+        Concert concert = new Concert("London", "UK", "2019/10/10");
+        Concert nextDayConcert = new Concert("London", "UK", "2019/10/11");
+        Ticket ticket = new Ticket(1234, concert);
+
+        assertEquals(1234, ticket.getNumber());
+        assertEquals(concert, ticket.getConcert());
+
+        // isValid checks if ticket is for the correct concert
+        assertTrue(concert.isValid(ticket));
+        assertFalse(nextDayConcert.isValid(ticket));
+
+        fieldsArentPublic(Ticket.class);
+    }
+
+
+
+
+    // This test expects the code to throw an InvalidTicket exception
+    @Test(expected = InvalidTicket.class)
+    public void testInvalidTicket() throws InvalidTicket {
+        Concert concert = new Concert("London", "UK", "2019/10/10");
+        Ticket ticket = new Ticket(-1, concert);
+    }
+
+
+
+    @Test
+    public void testBandArtists() {
+        Band radiohead = new Band("Radiohead", "UK");
+
+        Artist thom = new Artist("Thom Yorke", "UK");
+        Artist jonny = new Artist("Jonny Greenwood", "UK");
+        Artist colin = new Artist("Colin Greenwood", "UK");
+        Artist philip = new Artist("Philip Selway", "UK");
+        Artist ed = new Artist("Ed O'Brien", "UK");
+
+        radiohead.addArtist(thom);
+        radiohead.addArtist(jonny);
+        radiohead.addArtist(colin);
+        radiohead.addArtist(philip);
+        radiohead.addArtist(ed);
+
+        List<Artist> artists = radiohead.getArtists();
+        assertEquals(artists.get(0).getName(), "Thom Yorke");
+        assertEquals(artists.get(1).getName(), "Jonny Greenwood");
+        assertEquals(artists.get(2).getName(), "Colin Greenwood");
+        assertEquals(artists.get(3).getName(), "Philip Selway");
+        assertEquals(artists.get(4).getName(), "Ed O'Brien");
+        
+        assertEquals(5, artists.size());
+    }
+
+
+
+    @Test
+    public void testContains() {
+        Band radiohead = new Band("Radiohead", "UK");
+
+        Artist thom = new Artist("Thom Yorke", "UK");
+        Artist jonny = new Artist("Jonny Greenwood", "UK");
+        Artist colin = new Artist("Colin Greenwood", "UK");
+        Artist philip = new Artist("Philip Selway", "UK");
+        Artist ed = new Artist("Ed O'Brien", "UK");
+
+        radiohead.addArtist(thom);
+        radiohead.addArtist(jonny);
+        radiohead.addArtist(colin);
+        radiohead.addArtist(philip);
+        radiohead.addArtist(ed);
+
+        assertTrue(thom.equals(new Artist("Thom Yorke", "UK")));
+
+        assertTrue(radiohead.containsArtist(new Artist("Thom Yorke", "UK")));
+        assertFalse(radiohead.containsArtist(new Artist("Thom Yorke", "USA")));
+        assertFalse(radiohead.containsArtist(new Artist("Tom Yorke", "UK")));
+    }
+
+
+
+    @Test
+    public void testParticipates() {
+        Concert concert = new Concert("London", "UK", "2019/10/10");
+
+        Band radiohead = new Band("Radiohead", "UK");
+
+        Artist thom = new Artist("Thom Yorke", "UK");
+        Artist jonny = new Artist("Jonny Greenwood", "UK");
+        Artist colin = new Artist("Colin Greenwood", "UK");
+        Artist philip = new Artist("Philip Selway", "UK");
+        Artist ed = new Artist("Ed O'Brien", "UK");
+
+        radiohead.addArtist(thom);
+        radiohead.addArtist(jonny);
+        radiohead.addArtist(colin);
+        radiohead.addArtist(philip);
+        radiohead.addArtist(ed);
+
+        concert.addAct(radiohead);
+
+        Artist bob = new Artist("Bob Dylan", "USA");
+        concert.addAct(bob);
+
+        // Concert.participates only needs to work for artists
+        assertTrue(concert.participates(new Artist("Bob Dylan", "USA")));
+        assertTrue(concert.participates(new Artist("Thom Yorke", "UK")));
+
+        assertFalse(concert.participates(new Artist("Bob Dylan", "UK")));
+        assertFalse(concert.participates(new Artist("Thom Yorke", "USA")));
+        assertFalse(concert.participates(new Artist("Bob the Builder", "USA")));
+        assertFalse(concert.participates(new Artist("Tom Tom", "UK")));
+    }
+
+
+
+    @Test
+    public void testBoxOffice() throws InvalidTicket {
+        Act bob = new Artist("Bob Dylan", "USA");
+        Band radiohead = new Band("Radiohead", "UK");
+
+        Concert concertLondon = new Concert("London", "UK", "2019/10/10");
+        concertLondon.addAct(bob);
+
+        Concert concertParis = new Concert("Paris", "France", "2019/05/20");
+        concertParis.addAct(bob);
+        concertParis.addAct(radiohead);
+
+        // Buying three tickets for the London concert
+        List<Ticket> tickets1 = BoxOffice.buy(concertLondon, 3);
+        // Buying three tickets for the Paris concert
+        List<Ticket> tickets2 = BoxOffice.buy(concertParis, 3);
+        // Buying three more tickets for the London concert
+        List<Ticket> tickets3 = BoxOffice.buy(concertLondon, 3);
+
+        assertEquals(1, tickets1.get(0).getNumber());
+        assertEquals(2, tickets1.get(1).getNumber());
+        assertEquals(3, tickets1.get(2).getNumber());
+
+        assertEquals(4, tickets3.get(0).getNumber());
+        assertEquals(5, tickets3.get(1).getNumber());
+        assertEquals(6, tickets3.get(2).getNumber());
+
+        assertEquals(tickets1.get(0).getConcert(), concertLondon);
+        assertEquals(tickets2.get(0).getConcert(), concertParis);
+        assertEquals(tickets3.get(0).getConcert(), concertLondon);
+    }
 
 
 }
